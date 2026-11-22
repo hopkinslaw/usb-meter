@@ -34,7 +34,112 @@
   <button id="reset" onclick="Reset()">Reset</button>
   <button id="pause" onclick="Pause()">Pause</button>
   <button id="save" onclick="Save()">Save</button>
+<style>
+  .meter-summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 16px 0 24px;
+  }
 
+  .meter-summary > div {
+    padding: 12px 6px;
+    border: 1px solid #d8d8d8;
+    border-radius: 8px;
+    background: #f5f5f5;
+    text-align: center;
+  }
+
+  .meter-summary dt {
+    font-size: 0.85rem;
+  }
+
+  .meter-summary dd {
+    margin: 2px 0 0;
+    font-size: clamp(1.35rem, 5.5vw, 2.25rem);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
+
+  .meter-summary .meter-summary-time {
+    grid-column: 1 / -1;
+  }
+</style>
+
+<dl class="meter-summary" aria-label="Live meter readings">
+  <div>
+    <dt>Voltage</dt>
+    <dd data-reading="voltage">—</dd>
+  </div>
+  <div>
+    <dt>Current</dt>
+    <dd data-reading="current">—</dd>
+  </div>
+  <div>
+    <dt>Power</dt>
+    <dd data-reading="power">—</dd>
+  </div>
+  <div>
+    <dt>Resistance</dt>
+    <dd data-reading="resistance">—</dd>
+  </div>
+  <div>
+    <dt>Energy</dt>
+    <dd data-reading="energy">—</dd>
+  </div>
+  <div>
+    <dt>Capacity</dt>
+    <dd data-reading="capacity">—</dd>
+  </div>
+  <div>
+    <dt>Temperature</dt>
+    <dd data-reading="temperature">—</dd>
+  </div>
+  <div>
+    <dt>Samples</dt>
+    <dd data-reading="time_stats">0</dd>
+  </div>
+  <div class="meter-summary-time">
+    <dt>Elapsed time</dt>
+    <dd data-reading="time">000:00:00</dd>
+  </div>
+</dl>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const readouts = document.querySelectorAll(".meter-summary [data-reading]");
+
+    for (const readout of readouts) {
+      const reading = readout.dataset.reading;
+      const source = document.getElementById(reading);
+      const placeholder = readout.textContent;
+
+      const updateReadout = () => {
+        let value = source.textContent.trim();
+
+        if (reading === "temperature") {
+          value = value.split("/")[0].trim();
+        }
+
+        if (reading === "time_stats") {
+          value = value.replace(/^Samples:\s*/i, "");
+        }
+
+        readout.textContent = value || placeholder;
+      };
+
+      const observer = new MutationObserver(updateReadout);
+      observer.observe(source, {
+        childList: true,
+        characterData: true,
+        subtree: true
+      });
+      updateReadout();
+    }
+  });
+</script>
   <table>
     <thead>
       <tr>
