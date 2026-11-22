@@ -4,8 +4,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.min.css">
+  <style>
+    :root {
+      --text-main: #000;
+      --text-bright: #000;
+      --text-muted: #000;
+      --links: #000;
+    }
 
+    a {
+      text-decoration: underline;
+    }
+  </style>
   <title>USB BLE Power Meter</title>
 </head>
 
@@ -33,47 +44,47 @@
       </tr>
     </thead>
     <tbody>
-      <tr style="color: yellow">
+      <tr>
         <td>Voltage</td>
         <td id="voltage"></td>
         <td id="voltage_stats"></td>
       </tr>
-      <tr style="color: green">
+      <tr>
         <td>Current</td>
         <td id="current"></td>
         <td id="current_stats"></td>
       </tr>
-      <tr style="color: Red">
+      <tr>
         <td>Power</td>
         <td id="power"></td>
         <td id="power_stats"></td>
       </tr>
-      <tr style="color: purple">
+      <tr>
         <td>Energy</td>
         <td id="energy"></td>
         <td id="energy_stats"></td>
       </tr>
-      <tr style="color: lightBlue">
+      <tr>
         <td>Capacity</td>
         <td id="capacity"></td>
         <td id="capacity_stats"></td>
       </tr>
-      <tr style="color: blue">
+      <tr>
         <td>Resistance</td>
         <td id="resistance"></td>
         <td id="resistance_stats"></td>
       </tr>
-      <tr style="color: turquoise">
+      <tr>
         <td>Temperature</td>
         <td id="temperature"></td>
         <td id="temperature_stats"></td>
       </tr>
-      <tr style="color: lightGreen">
+      <tr>
         <td>USB Data -/+</td>
         <td id="usb"></td>
         <td id="usb_stats"></td>
       </tr>
-      <tr style="color: grey">
+      <tr>
         <td>Time</td>
         <td id="time">000:00:00</td>
         <td id="time_stats">Samples: 0</td>
@@ -98,13 +109,12 @@
   <footer style="text-align: right;">
     <a target="_blank" href="https://twitter.com/lanrat">Made by @LANRAT</a>
     <br>
-    <a target="_blank" href="https://github.com/lanrat/usb-meter">Source
-      Code</a>
+    <a target="_blank" href="https://github.com/lanrat/usb-meter">Source Code</a>
   </footer>
+
   <script src="https://cdn.plot.ly/plotly-2.14.0.min.js" defer></script>
   <script src="./js/meter.js" defer></script>
   <script src="./js/script.js" defer></script>
-
 </body>
 
 </html>
