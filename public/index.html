@@ -4,29 +4,119 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.min.css">
   <style>
     :root {
-      --text-main: #000;
-      --text-bright: #000;
-      --text-muted: #000;
-      --links: #000;
+      --c-voltage: #8a5a00;
+      --c-current: #166534;
+      --c-power: #c81e1e;
+      --c-energy: #7e22ce;
+      --c-capacity: #0369a1;
+      --c-resistance: #1d4ed8;
+      --c-temperature: #0f766e;
+      --c-usb: #3f6212;
+      --c-time: #525252;
     }
 
-    a {
-      text-decoration: underline;
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --c-voltage: #facc15;
+        --c-current: #4ade80;
+        --c-power: #f87171;
+        --c-energy: #c084fc;
+        --c-capacity: #7dd3fc;
+        --c-resistance: #93b4fd;
+        --c-temperature: #2dd4bf;
+        --c-usb: #bef264;
+        --c-time: #a3a3a3;
+      }
+    }
+
+    .meter-details tr.voltage { color: var(--c-voltage); }
+    .meter-details tr.current { color: var(--c-current); }
+    .meter-details tr.power { color: var(--c-power); }
+    .meter-details tr.energy { color: var(--c-energy); }
+    .meter-details tr.capacity { color: var(--c-capacity); }
+    .meter-details tr.resistance { color: var(--c-resistance); }
+    .meter-details tr.temperature { color: var(--c-temperature); }
+    .meter-details tr.usb { color: var(--c-usb); }
+    .meter-details tr.time { color: var(--c-time); }
+
+    .meter-summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin: 16px 0 24px;
+    }
+
+    .meter-summary > div {
+      padding: 12px 6px;
+      border: 1px solid #d8d8d8;
+      border-radius: 8px;
+      background: #f5f5f5;
+      color: #000;
+      text-align: center;
+    }
+
+    .meter-summary dt {
+      font-size: 0.85rem;
+    }
+
+    .meter-summary dd {
+      margin: 2px 0 0;
+      font-size: clamp(1.35rem, 5.5vw, 2.25rem);
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+    }
+
+    .meter-summary .meter-summary-time {
+      grid-column: 1 / -1;
     }
   </style>
   <title>USB BLE Power Meter</title>
 </head>
 
 <body>
-  <h1>USB BLE Power Meter</h1>
-  <h2 id="warnBlock">Your Browser does not appear to support WebBluetooth</h2>
-  <h3>Information</h3>
-  <p>Web app data logger for Atorch power meters.</p>
-
-  <p>View <a href="https://github.com/lanrat/usb-meter/blob/main/README.md">README</a> for more Information.</p>
+  <dl class="meter-summary" aria-label="Live meter readings">
+    <div>
+      <dt>Voltage</dt>
+      <dd data-reading="voltage">—</dd>
+    </div>
+    <div>
+      <dt>Current</dt>
+      <dd data-reading="current">—</dd>
+    </div>
+    <div>
+      <dt>Power</dt>
+      <dd data-reading="power">—</dd>
+    </div>
+    <div>
+      <dt>Resistance</dt>
+      <dd data-reading="resistance">—</dd>
+    </div>
+    <div>
+      <dt>Energy</dt>
+      <dd data-reading="energy">—</dd>
+    </div>
+    <div>
+      <dt>Capacity</dt>
+      <dd data-reading="capacity">—</dd>
+    </div>
+    <div>
+      <dt>Temperature</dt>
+      <dd data-reading="temperature">—</dd>
+    </div>
+    <div>
+      <dt>Samples</dt>
+      <dd data-reading="time_stats">0</dd>
+    </div>
+    <div class="meter-summary-time">
+      <dt>Elapsed time</dt>
+      <dd data-reading="time">000:00:00</dd>
+    </div>
+  </dl>
 
   <hr>
 
@@ -34,113 +124,10 @@
   <button id="reset" onclick="Reset()">Reset</button>
   <button id="pause" onclick="Pause()">Pause</button>
   <button id="save" onclick="Save()">Save</button>
-<style>
-  .meter-summary {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-    margin: 16px 0 24px;
-  }
 
-  .meter-summary > div {
-    padding: 12px 6px;
-    border: 1px solid #d8d8d8;
-    border-radius: 8px;
-    background: #f5f5f5;
-    text-align: center;
-  }
+  <h2 id="warnBlock">Your Browser does not appear to support WebBluetooth</h2>
 
-  .meter-summary dt {
-    font-size: 0.85rem;
-  }
-
-  .meter-summary dd {
-    margin: 2px 0 0;
-    font-size: clamp(1.35rem, 5.5vw, 2.25rem);
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-    line-height: 1.15;
-    overflow-wrap: anywhere;
-  }
-
-  .meter-summary .meter-summary-time {
-    grid-column: 1 / -1;
-  }
-</style>
-
-<dl class="meter-summary" aria-label="Live meter readings">
-  <div>
-    <dt>Voltage</dt>
-    <dd data-reading="voltage">—</dd>
-  </div>
-  <div>
-    <dt>Current</dt>
-    <dd data-reading="current">—</dd>
-  </div>
-  <div>
-    <dt>Power</dt>
-    <dd data-reading="power">—</dd>
-  </div>
-  <div>
-    <dt>Resistance</dt>
-    <dd data-reading="resistance">—</dd>
-  </div>
-  <div>
-    <dt>Energy</dt>
-    <dd data-reading="energy">—</dd>
-  </div>
-  <div>
-    <dt>Capacity</dt>
-    <dd data-reading="capacity">—</dd>
-  </div>
-  <div>
-    <dt>Temperature</dt>
-    <dd data-reading="temperature">—</dd>
-  </div>
-  <div>
-    <dt>Samples</dt>
-    <dd data-reading="time_stats">0</dd>
-  </div>
-  <div class="meter-summary-time">
-    <dt>Elapsed time</dt>
-    <dd data-reading="time">000:00:00</dd>
-  </div>
-</dl>
-
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const readouts = document.querySelectorAll(".meter-summary [data-reading]");
-
-    for (const readout of readouts) {
-      const reading = readout.dataset.reading;
-      const source = document.getElementById(reading);
-      const placeholder = readout.textContent;
-
-      const updateReadout = () => {
-        let value = source.textContent.trim();
-
-        if (reading === "temperature") {
-          value = value.split("/")[0].trim();
-        }
-
-        if (reading === "time_stats") {
-          value = value.replace(/^Samples:\s*/i, "");
-        }
-
-        readout.textContent = value || placeholder;
-      };
-
-      const observer = new MutationObserver(updateReadout);
-      observer.observe(source, {
-        childList: true,
-        characterData: true,
-        subtree: true
-      });
-      updateReadout();
-    }
-  });
-</script>
-  <table>
+  <table class="meter-details">
     <thead>
       <tr>
         <th>Measurement</th>
@@ -149,55 +136,53 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
+      <tr class="voltage">
         <td>Voltage</td>
         <td id="voltage"></td>
         <td id="voltage_stats"></td>
       </tr>
-      <tr>
+      <tr class="current">
         <td>Current</td>
         <td id="current"></td>
         <td id="current_stats"></td>
       </tr>
-      <tr>
+      <tr class="power">
         <td>Power</td>
         <td id="power"></td>
         <td id="power_stats"></td>
       </tr>
-      <tr>
+      <tr class="energy">
         <td>Energy</td>
         <td id="energy"></td>
         <td id="energy_stats"></td>
       </tr>
-      <tr>
+      <tr class="capacity">
         <td>Capacity</td>
         <td id="capacity"></td>
         <td id="capacity_stats"></td>
       </tr>
-      <tr>
+      <tr class="resistance">
         <td>Resistance</td>
         <td id="resistance"></td>
         <td id="resistance_stats"></td>
       </tr>
-      <tr>
+      <tr class="temperature">
         <td>Temperature</td>
         <td id="temperature"></td>
         <td id="temperature_stats"></td>
       </tr>
-      <tr>
+      <tr class="usb">
         <td>USB Data -/+</td>
         <td id="usb"></td>
         <td id="usb_stats"></td>
       </tr>
-      <tr>
+      <tr class="time">
         <td>Time</td>
         <td id="time">000:00:00</td>
         <td id="time_stats">Samples: 0</td>
       </tr>
     </tbody>
   </table>
-
-  <hr>
 
   <div id="graph"></div>
 
@@ -217,7 +202,41 @@
     <a target="_blank" href="https://github.com/lanrat/usb-meter">Source Code</a>
   </footer>
 
-  <script src="https://cdn.plot.ly/plotly-2.14.0.min.js" defer></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const readouts = document.querySelectorAll(".meter-summary [data-reading]");
+  
+      for (const readout of readouts) {
+        const reading = readout.dataset.reading;
+        const source = document.getElementById(reading);
+        const placeholder = readout.textContent;
+  
+        const updateReadout = () => {
+          let value = source.textContent.trim();
+  
+          if (reading === "temperature") {
+            value = value.split("/")[0].trim();
+          }
+  
+          if (reading === "time_stats") {
+            value = value.replace(/^Samples:\s*/i, "");
+          }
+  
+          readout.textContent = value || placeholder;
+        };
+  
+        const observer = new MutationObserver(updateReadout);
+        observer.observe(source, {
+          childList: true,
+          characterData: true,
+          subtree: true
+        });
+        updateReadout();
+      }
+    });
+  </script>
+
+  <script src="https://cdn.plot.ly/plotly-3.7.0.min.js" defer></script>
   <script src="./js/meter.js" defer></script>
   <script src="./js/script.js" defer></script>
 </body>
