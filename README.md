@@ -1,5 +1,6 @@
 # [USB BLE Power Meter](https://lanrat.github.io/usb-meter/)
 
+This fork adds some clearer readouts for easy viewing
 [lanrat.github.io/usb-meter](https://lanrat.github.io/usb-meter/)
 
 ## Information
